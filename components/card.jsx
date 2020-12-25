@@ -10,8 +10,8 @@ const theme = {
 function ProductCard(props) {
     const { availableforSale, description, images, title, variants } = props.product;
     const [onHover, setOnHover] = useState(false)
-    const toggleHover = () => {
-        setOnHover(!onHover)
+    const toggleHover = (value) => {
+        setOnHover(value || false)
     }
     return (
 		<ThemeProvider theme={theme}>
@@ -26,8 +26,9 @@ function ProductCard(props) {
 				// textColor='medium'
 				w='fit-content'
 				hoverShadow='4'
-				onMouseEnter={toggleHover.bind(this)}
-				onMouseLeave={toggleHover.bind(this)}>
+				onMouseOver={!onHover && toggleHover.bind(this, true)}
+				onMouseEnter={!onHover && toggleHover.bind(this, true)}
+				onMouseLeave={onHover && toggleHover.bind(this, false)}>
 				<Div h='12rem' rounded={{ tl: 'lg', tr: 'lg' }} w='16rem' bgImg={images[0].src} bgSize='cover' />
 				<Div d='flex' w='16rem' align='center' justify='center' p={{ x: '1rem', y: '1rem' }}>
 					<div style={{ height: '4rem' }}>
