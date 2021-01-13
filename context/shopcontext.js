@@ -4,11 +4,14 @@ import Client from 'shopify-buy';
 const ShopContext = React.createContext()
 
 // Initializing a client to return content in the store's primary language
+// const client = Client.buildClient({
+// 	domain: 'teknofeet-test.myshopify.com',
+// 	storefrontAccessToken: 'c177da7b56c17aef7aee736c1d1f48af',
+// });
 const client = Client.buildClient({
-	domain: 'teknofeet-test.myshopify.com',
-	storefrontAccessToken: 'c177da7b56c17aef7aee736c1d1f48af',
+	domain: 'sak-design.myshopify.com',
+	storefrontAccessToken: '2f4c4f3944ccdf2165c5a95d72156e06',
 });
-
 class ShopProvider extends Component {
 	state = {
 		products: [],
