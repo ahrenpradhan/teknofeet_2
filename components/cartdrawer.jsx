@@ -50,7 +50,7 @@ const CartDrawer = () => {
 					Empty Cart
 				</Button>
 				<Link href={checkout.webUrl}>
-					<a target="_blank" >
+					<a >
 						<Button onClick={closeCart} bg='info700'>
 							Proceed to checkout
 						</Button>

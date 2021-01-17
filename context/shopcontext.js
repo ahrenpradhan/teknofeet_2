@@ -1,5 +1,6 @@
 import React, { Component} from 'react';
-import Client from 'shopify-buy';
+// import Client from 'shopify-buy';
+import Client from '../modules/shopify-buy';
 
 const ShopContext = React.createContext()
 
@@ -23,6 +24,7 @@ class ShopProvider extends Component {
 		userDetails: {},
 		test: 'test',
 		client: client,
+		accessToken: null,
 	};
 
 	componentDidMount() {
@@ -30,9 +32,23 @@ class ShopProvider extends Component {
 	}
 
 	createCheckout = async () => {
-		const checkout = await client.checkout.create();
+		const input = {
+			email: 'ahrenpradhan@gmail.com',
+			password: 'Ahren@1998',
+		};
+		const accessToken = await client.customer.createAccessToken(input);
+		let checkout = await client.checkout.create();
+		let checkout2 = await client.checkout.associateCustomer(
+			checkout.id,
+			accessToken.customerAccessToken.accessToken,
+		);
+		
 		// console.log(checkout);
-		this.setState({ checkout: checkout });
+		this.setState({
+			checkout: checkout,
+			accessToken: accessToken.customerAccessToken,
+			checkout2,
+		});
 	};
 
 	addItemToCheckout = async (variantId, quantity) => {
@@ -42,8 +58,40 @@ class ShopProvider extends Component {
 				quantity: parseInt(quantity, 10),
 			},
 		];
-		const checkout = await client.checkout.addLineItems(this.state.checkout.id, lineItemsToAdd);
-		this.setState({ checkout: checkout });
+		// const shippingAddress = {
+		// 	address1: 'G1-28, BPTP Parksland',
+		// 	address2: 'Sector-89',
+		// 	city: 'Faridabad',
+		// 	company: null,
+		// 	country: 'India',
+		// 	firstName: 'Ahren',
+		// 	lastName: 'Pradhan',
+		// 	phone: '9560490133',
+		// 	province: 'Haryana',
+		// 	zip: '121002',
+		// };
+		let checkout = await client.checkout.addLineItems(
+			this.state.checkout.id,
+			lineItemsToAdd,
+		);
+
+		// checkout = await client.checkout.updateEmail(
+		// 	this.state.checkout.id,
+		// 	'ahrenpradhan@gmail.com',
+		// );
+		// checkout = await client.checkout.updateShippingAddress(
+		// 	this.state.checkout.id,
+		// 	shippingAddress,
+		// );
+		console.log(this.state.accessToken.accessToken);
+		// let checkout2 = await client.checkout.associateCustomer(
+		// 	this.state.checkout.id,
+		// 	this.state.accessToken.accessToken,
+		// );
+		let client2 = await client.customer.fetch(
+			this.state.accessToken.accessToken,
+		);
+		this.setState({ checkout: checkout, client2 });
 	};
 
 	fetchAllProducts = async () => {
@@ -67,11 +115,13 @@ class ShopProvider extends Component {
 	};
 
 	toggleId = (id) => {
-        this.setState({ userId: id });
+		this.setState({ userId: id });
 	};
-    toggleIsIdFormOpen = () => {
-        this.setState((prevState) => ({ isIdFormOpen: !prevState.isIdFormOpen }));
-    };
+	toggleIsIdFormOpen = () => {
+		this.setState((prevState) => ({
+			isIdFormOpen: !prevState.isIdFormOpen,
+		}));
+	};
 
 	render() {
 		return (
